@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{%block content%}
+		<h2><a href="{% url 'dish_detail' dish.id %}">{{dish.title}}</a></h2>
+		<h3>Описание:</h3>
+		<p>{{dish.description}}</p>
+		<h3>Ингридиенты:</h3>
+<form action="{% url "dish_search" %}" method="POST">
+	{%for ingredient in ingredients%}
+		<p>{{ingredient.name}}:</p>
+		<input type="number" name="{{ingredient.name}}" value="{{ingredient.name}}:" default="В граммах"/>
+	{%endfor%}
+	<br><br><br>
+	<button type="submit">Заказать</button>
+</form>
+{%endblock%}

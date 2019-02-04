@@ -1,0 +1,21 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Coocking_fun</title>
+
+</head>
+  <link rel="stylesheet" type="text/css" href="{%static 'css/dishes.css'%}">
+<body>
+
+  <div class="parent">
+    <div class="block">
+      <a href="{% url 'dish_list' %}">Вернуться на главную</a>
+      <a href="{% url 'add_dish' %}">Добавить блюдо</a>
+      <br><br><br><br>
+        {%block content%}
+        {%endblock%}
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{%block content%}
+<form action="{% url 'add_ingredient' dish_id%}" method='POST'>
+	{%csrf_token%}
+	<p>Укажите название ингредиента и его вес</p>
+	<p>Название:{{form_ingredient.name}}</p>
+	<p>Вес(кг):{{form_ingredient.weight}}</p>
+	<button type='submit'>Добавить ингридиент</button>
+</form>
+<p><a href="{{new_dish.get_absolute_url}}">Закончить</a></p>
+{%endblock%}
