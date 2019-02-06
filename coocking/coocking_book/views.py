@@ -3,7 +3,8 @@ from .models import Dish, Ingredient
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
 from django.views import View
-from .forms import AddDishForm, AddIngredientForm
+from .forms import AddDishForm, AddIngredientForm, AddIngredientFormFormSet, AddOrderForm, AddIngredientToOrderFormSet
+
 
 # Create your views here.
 
@@ -37,37 +38,50 @@ class AddDishView(View):
 
     def get(self, request, *args, **kwargs):
         form_dish = AddDishForm()
-        context = {'form_dish': form_dish}
+        form_ingredient = AddIngredientFormFormSet()
+        context = {'form_dish': form_dish, 'form_ingredient': form_ingredient}
         return render(self.request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form_dish = AddDishForm(request.POST)
-        context = {'form_dish': form_dish}
+        form_ingredient = AddIngredientFormFormSet(request.POST)
+        context = {'form_dish': form_dish, 'form_ingredient': form_ingredient}
         if form_dish.is_valid():
-            dish = form_dish.save(commit = False)
+            dish = form_dish.save(commit=False)
             dish.save()
-            return redirect('add_ingredient', dish_id = dish.id)
+            for form in form_ingredient:
+                if form.is_valid():
+                    ingredient = form.save(commit=False)
+                    if ingredient.name != None and ingredient.weight != None:
+                        ingredient.save()
+                        dish.ingredient.add(ingredient)
+                        dish.save()
+
+            return redirect('dish_list')
         return render(self.request, self.template_name, context)
 
-class AddIngredientsToDish(View):
-    template_name = 'add_ingredient.html'
+
+
+class AddOrderView(View):
+    template_name = 'add_order_list.html'
+
+    def get(self, request, *args, **kwargs):
+        form_order = AddOrderForm()
+        form_ingredient_to_order = AddIngredientToOrderFormSet(
+            queryset=Ingredient.objects.filter(dishes=self.kwargs['pk']))
+        context = {'form_ingredient_to_order': form_ingredient_to_order,
+                   'form_order':form_order}
+        return render(self.request, self.template_name, context)
+
+'''class UpdateDishView(View):
+    template_name = 'update_dish.html'
 
     def get(self, request, *args, **kwargs):
         form_ingredient = AddIngredientForm()
-        new_dish = Dish.objects.get(id = self.kwargs['dish_id'])
-        context = {'form_ingredient': form_ingredient, 'new_dish':new_dish, 'dish_id':self.kwargs['dish_id']}
-        return render(self.request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        form_ingredient = AddIngredientForm(request.POST)
-        new_dish = Dish.objects.get(id = self.kwargs['dish_id'])
-        context = {'form_ingredient': form_ingredient, 'new_dish':new_dish, 'dish_id':self.kwargs['dish_id']}
-        if form_ingredient.is_valid():
-            ingredient = form_ingredient.save(commit = False)
-            ingredient.save()
-            new_dish.ingredient.add(ingredient)
-            new_dish.save()
-            return redirect('add_ingredient', dish_id = new_dish.id)
+        form_dish = AddDishForm()
+        new_dish = Dish.objects.get(id=self.kwargs['dish_id'])
+        context = {'form_ingredient': form_ingredient,
+                   'new_dish': new_dish, 'dish_id': self.kwargs['dish_id']}
         return render(self.request, self.template_name, context)
 
 
@@ -76,7 +90,7 @@ def ordering(request, dish_id):
     ingredients = Ingredient.objects.filter(dishes=dish_id)
     context = {'dish': dish, 'ingredients': ingredients}
     return render(request, 'ordering.html', context)
-
+'''
 
 class SearchView(ListView):
     model = Dish

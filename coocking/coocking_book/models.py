@@ -5,9 +5,9 @@ from django.urls import reverse
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=120, unique=False, blank=True, null=True)
-    weight = models.FloatField(blank=True, null=True)
-    
+    name = models.CharField(max_length=120, unique=False,
+                            verbose_name='Название')
+    weight = models.FloatField(verbose_name='Количество в граммах')
 
     def __str__(self):
         return self.name
@@ -28,21 +28,9 @@ class Dish(models.Model):
 
 class Order(models.Model):
 
-    contact = models.CharField(max_length=120, on_delete = models.CASCADE)
-    order_list = models.ManyToManyField(Ingredient, related_name='orders', through='OrderList')
+    contact = models.IntegerField()
+    ingredients = models.ManyToManyField(Ingredient, related_name='orders')
+    date_joined = models.DateField(auto_now=True)
 
-    def __init__(self):
-        return self.contact
-
-
-class OrderList(models.Model):
-
-    order = models.ForeignKey(Order, on_delete = models.CASCADE, related_name = 'OrderList')
-    ingredients = models.ForeignKey(Ingredient)
-    date_joined = models.DateField(auto_now = True)
-
-
-
-
-
-
+    def __str__(self):
+        return 'Номер заказчика:{0}, Дата заказа:{1}'.format(self.contact, self.date_joined)

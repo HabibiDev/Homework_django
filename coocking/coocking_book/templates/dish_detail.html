@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {%block content%}
-		<h2><a href="{{dish.get_absolute_url}}">{{dish.title}}</a></h2>
+		<h2>{{dish.title}}</h2>
 		<h3>Описание:</h3>
 		<p>{{dish.description}}</p>
 		<h3>Ингридиенты:</h3>
 	{%for ingredient in dishes_ingredients%}
-		<p>{{ingredient.name}}:{{ingredient.weight}}г.</p>
+		<p>{{ingredient.name}} : {{ingredient.weight}} г.</p>
 	{%endfor%}
+	<p><a href="{% url 'add_order_list' dish.id %}">Оформить заказ</a></p>
 {%endblock%}
 

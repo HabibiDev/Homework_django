@@ -10,8 +10,10 @@
 
   <div class="parent">
     <div class="block">
-      <a href="{% url 'dish_list' %}">Вернуться на главную</a>
-      <a href="{% url 'add_dish' %}">Добавить блюдо</a>
+        <p><a href="{% url 'dish_list' %}">Главная</a>
+           <a href="{% url 'add_dish' %}">Добавить блюдо</a>
+        </p>
+      
       <br><br><br><br>
         {%block content%}
         {%endblock%}

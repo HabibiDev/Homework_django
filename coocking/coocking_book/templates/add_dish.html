@@ -6,6 +6,8 @@
 	<p>{{form_dish.title}}</p>
 	<p>Описание</p>
 	<p>{{form_dish.description}}</p>
-	<button type='submit'>Добавить ингридиенты</button>
+	<p>Ингредиенты:</p>
+	{{form_ingredient.as_p}}
+	<button type='submit'>Добавить блюдо</button>
 </form>
 {%endblock%}

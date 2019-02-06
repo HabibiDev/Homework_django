@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Dish',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=120, unique=True)),
                 ('description', models.TextField(blank=True, null=True)),
             ],
@@ -22,7 +23,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Ingredient',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=120, unique=True)),
                 ('weight', models.FloatField(blank=True, null=True)),
             ],
@@ -30,6 +32,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dish',
             name='ingredient',
-            field=models.ManyToManyField(related_name='dishes', to='coocking_book.Ingredient'),
+            field=models.ManyToManyField(
+                related_name='dishes', to='coocking_book.Ingredient'),
         ),
     ]

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{%block content%}
+		<h3>Ингридиенты:</h3>
+<form action="{% url 'add_order_list' %}" method="POST">
+	{%csrf_token%}
+	{{form_ingredient_to_order.as_p}}
+	<br><br><br>
+	<p>Введите ваш конатктный номер телефона</p>
+	{{form_order.as_p}}
+	<button type="submit">Заказать</button>
+</form>
+{%endblock%}
