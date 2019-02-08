@@ -4,7 +4,7 @@
 	<h3>Описание:</h3>
 	<p>{{order_dish.description}}</p>
 	<br><br><br>
-	<form action="{% url 'coocking_book:add_order_list' %}" method="POST">
+	<form action="{% url 'coocking_book:add_order_list' order_dish.id %}" method="POST">
 		{%csrf_token%}
 		<p>Введите ваш контактный номер телефона:</p>
 		{{form_order.contact}}

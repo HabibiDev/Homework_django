@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from .models import Dish, Ingredient
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
@@ -61,16 +62,42 @@ class AddDishView(View):
         return render(self.request, self.template_name, context)
 
 
-
 class AddOrderView(View):
     template_name = 'add_order_list.html'
 
     def get(self, request, *args, **kwargs):
-        order_dish = Dish.objects.get(pk=self.kwargs['pk'])
+        order_dish = Dish.objects.get(id=self.kwargs['dish_id'])
         form_order = OrderForm()
         context = {'form_order': form_order,
-                   'order_dish':order_dish}
+                   'order_dish': order_dish}
         return render(self.request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        order_dish = Dish.objects.get(id=self.kwargs['dish_id'])
+        form_order = OrderForm(request.POST)
+        context = {'form_order': form_order,
+                   'order_dish': order_dish}
+        if form_order.is_valid():
+            order = form_order.save(commit=False)
+            order.save()
+            order.dish = order_dish
+            order.save()
+            return redirect('coocking_book:add_ingredients_list', kwargs = {'order_id':order.id, 'dish_id':order_dish.id})
+        return render(self.request, self.template_name, context)
+
+
+class AddIngredientToOrderView(View):
+
+    template_name = 'add_ingredients_to_order.html'
+
+    def get(self, request, *args, **kwargs):
+        form_ingredient = AddIngredientToOrderFormSet(queryset = Ingredient.objects.filter(dishes=self.kwargs['dish_id']))
+        form_order_list = formset_factory(OrderIngredientsForm, extra=Ingredient.objects.filter(dishes=self.kwargs['dish_id']).count())
+        context = {'form_ingredient':form_ingredient,
+                   'form_order_list':form_order_list,
+                    }
+        return render(self.request, self.template_name, context)
+        
 
 
 class SearchView(ListView):
