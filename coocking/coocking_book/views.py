@@ -3,7 +3,7 @@ from .models import Dish, Ingredient
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
 from django.views import View
-from .forms import AddDishForm, AddIngredientForm, AddIngredientFormFormSet, AddOrderForm, AddIngredientToOrderFormSet
+from .forms import AddDishForm, AddIngredientForm, AddIngredientFormFormSet, AddIngredientToOrderFormSet, OrderForm
 
 
 # Create your views here.
@@ -57,7 +57,7 @@ class AddDishView(View):
                         dish.ingredient.add(ingredient)
                         dish.save()
 
-            return redirect('dish_list')
+            return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)
 
 
@@ -66,31 +66,12 @@ class AddOrderView(View):
     template_name = 'add_order_list.html'
 
     def get(self, request, *args, **kwargs):
-        form_order = AddOrderForm()
-        form_ingredient_to_order = AddIngredientToOrderFormSet(
-            queryset=Ingredient.objects.filter(dishes=self.kwargs['pk']))
-        context = {'form_ingredient_to_order': form_ingredient_to_order,
-                   'form_order':form_order}
+        order_dish = Dish.objects.get(pk=self.kwargs['pk'])
+        form_order = OrderForm()
+        context = {'form_order': form_order,
+                   'order_dish':order_dish}
         return render(self.request, self.template_name, context)
 
-'''class UpdateDishView(View):
-    template_name = 'update_dish.html'
-
-    def get(self, request, *args, **kwargs):
-        form_ingredient = AddIngredientForm()
-        form_dish = AddDishForm()
-        new_dish = Dish.objects.get(id=self.kwargs['dish_id'])
-        context = {'form_ingredient': form_ingredient,
-                   'new_dish': new_dish, 'dish_id': self.kwargs['dish_id']}
-        return render(self.request, self.template_name, context)
-
-
-def ordering(request, dish_id):
-    dish = Dish.objects.get(id=dish_id)
-    ingredients = Ingredient.objects.filter(dishes=dish_id)
-    context = {'dish': dish, 'ingredients': ingredients}
-    return render(request, 'ordering.html', context)
-'''
 
 class SearchView(ListView):
     model = Dish

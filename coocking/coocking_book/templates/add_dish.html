@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {%block content%}
-<form action="{% url 'add_dish' %}" method='POST'>
+<form action="{% url 'coocking_book:add_dish' %}" method='POST'>
 	{%csrf_token%}
 	<p>Название блюда</p>
 	<p>{{form_dish.title}}</p>

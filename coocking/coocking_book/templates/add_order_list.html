@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {%block content%}
-		<h3>Ингридиенты:</h3>
-<form action="{% url 'add_order_list' %}" method="POST">
-	{%csrf_token%}
-	{{form_ingredient_to_order.as_p}}
+	<h2>{{order_dish.title}}</h2>
+	<h3>Описание:</h3>
+	<p>{{order_dish.description}}</p>
 	<br><br><br>
-	<p>Введите ваш конатктный номер телефона</p>
-	{{form_order.as_p}}
-	<button type="submit">Заказать</button>
-</form>
+	<form action="{% url 'coocking_book:add_order_list' %}" method="POST">
+		{%csrf_token%}
+		<p>Введите ваш контактный номер телефона:</p>
+		{{form_order.contact}}
+		<br><br><br>
+		<button type="submit">Выбрать ингредиенты</button>
+	</form>
 {%endblock%}

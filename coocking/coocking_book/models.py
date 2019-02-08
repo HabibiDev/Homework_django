@@ -23,14 +23,22 @@ class Dish(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('dish_detail', kwargs={'pk': self.pk})
+        return reverse('coocking_book:dish_detail', kwargs={'pk': self.pk})
 
 
 class Order(models.Model):
-
-    contact = models.IntegerField()
-    ingredients = models.ManyToManyField(Ingredient, related_name='orders')
-    date_joined = models.DateField(auto_now=True)
+    dish = models.ForeignKey(
+        Dish, on_delete=models.CASCADE, related_name='order_dish', null=True)
+    contact = models.CharField(max_length=120, null=True)
+    order_date = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return 'Номер заказчика:{0}, Дата заказа:{1}'.format(self.contact, self.date_joined)
+        return '{0}{1}'.format(self.dish, self.order_date)
+
+
+class OrderIngredients(models.Model):
+
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='order_ingredients')
+    ingredients = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()

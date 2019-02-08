@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import SearchView, DishDetailView, DishListView, AddDishView, AddOrderView
-
+app_name = 'coocking_book'
 urlpatterns = [
     path('', DishListView.as_view(), name='dish_list'),
     path('dish/<int:pk>', DishDetailView.as_view(), name='dish_detail'),
