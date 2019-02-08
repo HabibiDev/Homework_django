@@ -6,6 +6,8 @@
 	<br><br><br>
 	<form action="{% url 'coocking_book:add_order_list' order_dish.id %}" method="POST">
 		{%csrf_token%}
+		{{form_ingredient.as_p}}
+		<br><br>
 		<p>Введите ваш контактный номер телефона:</p>
 		{{form_order.contact}}
 		<br><br><br>

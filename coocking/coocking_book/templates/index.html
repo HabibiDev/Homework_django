@@ -12,6 +12,8 @@
 		<h2><a href="{{dish.get_absolute_url}}">{{dish.title}}</a></h2>
 		<h3>Описание:</h3>
 		<p>{{dish.description}}</p>
-		<p><a href="{% url 'coocking_book:add_order_list' dish.id %}">Оформить заказ</a></p>
+		<p><a href="{% url 'coocking_book:add_order_list' dish.id %}">Оформить заказ</a>
+		   <a href="{% url 'coocking_book:delete_dish' dish.id %}">Удалить блюдо</a>
+		</p>
 	{%endfor%}
 {%endblock%}

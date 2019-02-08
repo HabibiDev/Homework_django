@@ -2,7 +2,7 @@ from django import forms
 from django.forms.widgets import CheckboxSelectMultiple
 from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
-from .models import Dish, Ingredient, Order, OrderIngredients
+from .models import Dish, Ingredient, Order
 
 
 class AddIngredientForm(forms.ModelForm):
@@ -13,7 +13,7 @@ class AddIngredientForm(forms.ModelForm):
 
 
 AddIngredientFormFormSet = formset_factory(
-    AddIngredientForm, extra=10, min_num=1)
+    AddIngredientForm, extra=10)
 
 
 class AddDishForm(forms.ModelForm):
@@ -27,18 +27,7 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('contact',)
-        exclude = ('order_date', 'dish')
-
-class OrderIngredientsForm(forms.ModelForm):
-    class Meta:
-        model = OrderIngredients
-        fields = ('quantity',)
-        exclude = ('order', 'ingredients',)
-
-
-    
-
-
+        exclude = ('dish',)
 
 AddIngredientToOrderFormSet = modelformset_factory(
     Ingredient, form = AddIngredientForm, fields=('name', 'weight',))

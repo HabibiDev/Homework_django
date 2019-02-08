@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-<form action="{% url 'coocking_book:add_ingredients_list' %}" method='POST'>
-	{%csrf_token%}
-	<p>Ингредиенты:</p>
-	{{form_ingredient.as_p}}
-	<button type='submit'>Заказать</button>
-</form>
-{%endblock%}
