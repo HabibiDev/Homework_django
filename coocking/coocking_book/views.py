@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.formsets import formset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
@@ -64,6 +64,18 @@ class AddDishView(View):
                         dish.save()
 
             return redirect('coocking_book:dish_list')
+        return render(self.request, self.template_name, context)
+
+class UpdateDishView(View):
+
+    template_name = 'update_dish.html'
+
+    def get(self, request, *args, **kwargs):
+        dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
+        form_ingredient = AddIngredientToOrderFormSet(
+            queryset=Ingredient.objects.filter(dishes=self.kwargs['dish_id']))
+        form_dish = AddDishForm(request.POST or None, instance = dish_object)
+        context = {'form_dish':form_dish, 'form_ingredient':form_ingredient}
         return render(self.request, self.template_name, context)
 
 

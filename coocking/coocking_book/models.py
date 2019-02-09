@@ -8,6 +8,7 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=120, unique=False,
                             verbose_name='Название')
     weight = models.FloatField(verbose_name='Количество в граммах', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

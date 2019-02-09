@@ -15,5 +15,6 @@
 		<p><a href="{% url 'coocking_book:add_order_list' dish.id %}">Оформить заказ</a>
 		   <a href="{% url 'coocking_book:delete_dish' dish.id %}">Удалить блюдо</a>
 		</p>
+		<p><a href="{%url 'coocking_book:update_dish' dish.id %}">Редактировать блюдо</a></p>
 	{%endfor%}
 {%endblock%}
