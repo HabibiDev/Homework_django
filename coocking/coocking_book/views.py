@@ -6,10 +6,10 @@ from .models import Dish, Ingredient, IngredientInOrder, Order
 from django.views.generic import ListView, DetailView, DeleteView
 from django.db.models import Q
 from django.views import View
-from .forms import (AddDishForm, 
-                    AddIngredientForm, 
+from .forms import (AddDishForm,
+                    AddIngredientForm,
                     AddIngredientFormFormSet,
-                    AddIngredientToOrderFormSet, 
+                    AddIngredientToOrderFormSet,
                     OrderForm)
 
 # Create your views here.
@@ -66,16 +66,63 @@ class AddDishView(View):
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)
 
+
 class UpdateDishView(View):
 
     template_name = 'update_dish.html'
 
     def get(self, request, *args, **kwargs):
         dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
-        form_ingredient = AddIngredientToOrderFormSet(
-            queryset=Ingredient.objects.filter(dishes=self.kwargs['dish_id']))
-        form_dish = AddDishForm(request.POST or None, instance = dish_object)
-        context = {'form_dish':form_dish, 'form_ingredient':form_ingredient}
+        ingredients = Ingredient.objects.filter(dishes=dish_object.id)
+        context = {'form_dish': dish_object, 'ingredients': ingredients}
+        return render(self.request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
+        ingredients = Ingredient.objects.filter(dishes=dish_object.id)
+        dish_object.title = request.POST.get('title')
+        dish_object.description = request.POST.get('description')
+
+        for ingredient in ingredients:
+            if not request.POST.get('{0}_is_active'.format(ingredient.name)):
+                ingredient.delete()
+            else:
+                if request.POST.get(ingredient.name) != ingredient.name:
+                    ingredient.name = request.POST.get(ingredient.name)
+                if str(request.POST.get('{0}_weight'.format(ingredient.name))) != str(ingredient.weight):
+                    ingredient.weight = float(request.POST.get(
+                        '{0}_weight'.format(ingredient.name))[:-2])
+            ingredient.save()
+        dish_object.save()
+        if 'add_ingredients' in request.POST:
+            return redirect(reverse('coocking_book:add_ingredients', kwargs={'dish_id': dish_object.id}))
+        else:
+            return redirect('coocking_book:dish_list')
+
+
+class AddIngredientView(View):
+    template_name = 'add_ingredients.html'
+
+    def get(self, request, *args, **kwargs):
+        dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
+        form_ingredient = AddIngredientFormFormSet()
+        context = {'form_ingredient': form_ingredient,
+                   'dish_object': dish_object}
+        return render(self.request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
+        form_ingredient = AddIngredientFormFormSet(request.POST)
+        context = {'form_ingredient': form_ingredient,
+                   'dish_object': dish_object}
+        for form in form_ingredient:
+            if form.is_valid():
+                ingredient = form.save(commit=False)
+                if ingredient.name != None and ingredient.weight != None:
+                    ingredient.save()
+                    dish_object.ingredient.add(ingredient)
+                    dish_object.save()
+            return redirect(reverse('coocking_book:update_dish', kwargs={'dish_id': dish_object.id}))
         return render(self.request, self.template_name, context)
 
 
@@ -83,9 +130,6 @@ class DeleteDishView(SuccessMessageMixin, DeleteView):
     model = Dish
     template_name = 'dish_confirm_delete.html'
     success_url = reverse_lazy('coocking_book:dish_list')
-    
-
-
 
 
 class AddOrderView(View):
@@ -98,7 +142,7 @@ class AddOrderView(View):
             queryset=Ingredient.objects.filter(dishes=self.kwargs['dish_id']))
         context = {'form_order': form_order,
                    'order_dish': order_dish,
-                   'form_ingredient': form_ingredient,}
+                   'form_ingredient': form_ingredient, }
         return render(self.request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -107,7 +151,7 @@ class AddOrderView(View):
         form_ingredient = AddIngredientToOrderFormSet(request.POST)
         context = {'form_order': form_order,
                    'order_dish': order_dish,
-                   'form_ingredient': form_ingredient,}
+                   'form_ingredient': form_ingredient, }
         if form_order.is_valid():
             order = form_order.save(commit=False)
             order.save()
@@ -117,12 +161,14 @@ class AddOrderView(View):
                 if form.is_valid():
                     ingredient = form.save(commit=False)
                     if ingredient.name != None and ingredient.weight != None:
-                        order_ingredient = IngredientInOrder(name = ingredient.name, weight = ingredient.weight)
+                        order_ingredient = IngredientInOrder(
+                            name=ingredient.name, weight=ingredient.weight)
                         order_ingredient.save()
                         order.ingredients.add(order_ingredient)
                         order.save()
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)
+
 
 class OrderListView(ListView):
 
@@ -133,6 +179,7 @@ class OrderListView(ListView):
         context = super().get_context_data(**kwargs)
         context['orders'] = Order.objects.all()
         return context
+
 
 class OrderDetailView(DetailView):
 
@@ -145,7 +192,6 @@ class OrderDetailView(DetailView):
         context['order'] = self.get_object()
         context['order_ingredient'] = self.get_object().ingredients.all()
         return context
-
 
 
 class SearchView(ListView):

@@ -8,5 +8,6 @@
 		<p>{{ingredient.name}} : {{ingredient.weight}} г.</p>
 	{%endfor%}
 	<p><a href="{% url 'coocking_book:add_order_list' dish.id %}">Оформить заказ</a></p>
+	<p><a href="{%url 'coocking_book:update_dish' dish.id %}">Редактировать блюдо</a></p>
 {%endblock%}
 

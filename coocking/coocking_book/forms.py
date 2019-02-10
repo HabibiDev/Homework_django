@@ -23,11 +23,13 @@ class AddDishForm(forms.ModelForm):
         fields = ('title', 'description')
         exclude = ('ingredient',)
 
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('contact',)
         exclude = ('dish',)
 
+
 AddIngredientToOrderFormSet = modelformset_factory(
-    Ingredient, form = AddIngredientForm, fields=('name', 'weight', 'is_active'))
+    Ingredient, form=AddIngredientForm, fields=('name', 'weight', 'is_active'))
