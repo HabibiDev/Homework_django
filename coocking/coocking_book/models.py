@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
+from notes.models import NotesItem
 from django.urls import reverse
 
 # Create your models here.
@@ -9,8 +11,7 @@ class Ingredient(models.Model):
                             verbose_name='Название')
     weight = models.FloatField(
         verbose_name='Количество в граммах', blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -20,6 +21,7 @@ class Dish(models.Model):
     title = models.CharField(max_length=120, unique=True)
     description = models.TextField(blank=True, null=True)
     ingredient = models.ManyToManyField(Ingredient, related_name='dishes')
+    note = GenericRelation(NotesItem)
 
     def __str__(self):
         return self.title
@@ -45,6 +47,7 @@ class Order(models.Model):
     ingredients = models.ManyToManyField(
         IngredientInOrder, related_name='orders')
     order_date = models.DateField(auto_now_add=True, null=True)
+    note = GenericRelation(NotesItem)
 
     def get_absolute_url(self):
         return reverse('coocking_book:order_detail', kwargs={'pk': self.pk})

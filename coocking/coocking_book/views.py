@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.contenttypes.models import ContentType
 from django.forms.formsets import formset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
 from .models import Dish, Ingredient, IngredientInOrder, Order
+from notes.models import Note
 from django.views.generic import ListView, DetailView, DeleteView
 from django.db.models import Q
 from django.views import View
@@ -33,6 +35,8 @@ class DishDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DishDetailView, self).get_context_data(**kwargs)
+        content_type = ContentType.objects.get_for_model(Dish)
+        context['notes'] = Note.objects.filter(note_item__content_type=content_type)
         context['dishes'] = self.model.objects.all()
         context['dish'] = self.get_object()
         context['dishes_ingredients'] = self.get_object().ingredient.all()
@@ -96,6 +100,8 @@ class UpdateDishView(View):
         dish_object.save()
         if 'add_ingredients' in request.POST:
             return redirect(reverse('coocking_book:add_ingredients', kwargs={'dish_id': dish_object.id}))
+        elif 'add_note' in request.POST:
+            return redirect(reverse('notes:add_notes_to_dish', kwargs={'dish_id': dish_object.id}))
         else:
             return redirect('coocking_book:dish_list')
 
@@ -188,6 +194,8 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
+        content_type = ContentType.objects.get_for_model(Order)
+        context['notes'] = Note.objects.filter(note_item__content_type=content_type)
         context['orders'] = self.model.objects.all()
         context['order'] = self.get_object()
         context['order_ingredient'] = self.get_object().ingredients.all()
