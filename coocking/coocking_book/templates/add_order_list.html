@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {%block content%}
+	<font color="red">{{error}}</font>
 	<h2>{{order_dish.title}}</h2>
 	<h3>Описание:</h3>
 	<p>{{order_dish.description}}</p>
@@ -11,6 +12,6 @@
 		<p>Введите ваш контактный номер телефона:</p>
 		{{form_order.contact}}
 		<br><br><br>
-		<button type="submit">Выбрать ингредиенты</button>
+		<button type="submit">Сохранить заказ</button>
 	</form>
 {%endblock%}

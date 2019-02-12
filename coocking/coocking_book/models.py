@@ -11,7 +11,7 @@ class Ingredient(models.Model):
                             verbose_name='Название')
     weight = models.FloatField(
         verbose_name='Количество в граммах', blank=True, null=True)
-    
+
     def __str__(self):
         return self.name
 

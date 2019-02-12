@@ -173,6 +173,10 @@ class AddOrderView(View):
                         order_ingredient.save()
                         order.ingredients.add(order_ingredient)
                         order.save()
+                if order.ingredients.all().count() == 0:
+                    order.delete()
+                    context['error'] = 'Для оформления заказа нужно указать хотя бы один ингредиент и его количество'
+                    return render(self.request, self.template_name, context)
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)
 
@@ -196,7 +200,8 @@ class OrderDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(OrderDetailView, self).get_context_data(**kwargs)
         content_type = ContentType.objects.get_for_model(Order)
-        context['notes'] = Note.objects.filter(note_item__content_type=content_type)
+        context['notes'] = Note.objects.filter(
+            note_item__content_type=content_type)
         context['orders'] = self.model.objects.all()
         context['order'] = self.get_object()
         context['order_ingredient'] = self.get_object().ingredients.all()
