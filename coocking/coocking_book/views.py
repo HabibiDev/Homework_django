@@ -36,7 +36,8 @@ class DishDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DishDetailView, self).get_context_data(**kwargs)
         content_type = ContentType.objects.get_for_model(Dish)
-        context['notes'] = Note.objects.filter(note_item__content_type=content_type)
+        context['notes'] = Note.objects.filter(
+            note_item__content_type=content_type, note_item__object_id=self.kwargs['pk'])
         context['dishes'] = self.model.objects.all()
         context['dish'] = self.get_object()
         context['dishes_ingredients'] = self.get_object().ingredient.all()

@@ -14,7 +14,10 @@
            <a href="{% url 'coocking_book:add_dish' %}">Добавить блюдо</a>
            <a href="{% url 'coocking_book:order_list' %}">Заказы</a>
         </p>
-      
+        <p>Заметки:
+          <a href="{% url 'notes:note_list' 'dish' %}">Блюда</a>
+          <a href="{% url 'notes:note_list' 'order' %}">Заказы</a>
+        </p>
       <br><br><br><br>
         {%block content%}
         {%endblock%}

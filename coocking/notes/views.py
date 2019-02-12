@@ -54,3 +54,16 @@ class AddNoteToOrderView(View):
         NotesItem.objects.create(content_type=content_type, object_id=self.kwargs[
                                  'order_id'], note=note)
         return redirect(reverse('coocking_book:order_detail', kwargs={'pk': self.kwargs['order_id']}))
+
+class NoteListView(ListView):
+
+    model = Note
+    template_name = 'note_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        content_type = ContentType.objects.get_by_natural_key(
+            app_label='coocking_book', model=self.kwargs['model'])        
+        context['notes'] = Note.objects.filter(note_item__content_type=content_type)
+        context['model'] = self.kwargs['model'].upper()
+        return context
