@@ -1,12 +1,13 @@
 from django.test import TestCase
-
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 # Create your tests here.
 from django.urls import reverse
 from .models import *
 # Create your tests here.
 
 
-class DishTestCase(TestCase):
+class OrderTestCase(TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -15,22 +16,51 @@ class DishTestCase(TestCase):
             name='Ингредиент№1', weight=500)
         cls.ingredient_2 = Ingredient.objects.create(
             name='Ингредиент№2', weight=500)
-        cls.dish_1 = Dish.objects.create(title='dish1', description='description1', )
-        cls.dish.ingredient.set([cls.ingredient_1, cls.ingredient_2])
+        cls.dish_1 = Dish.objects.create(title='dish1', description='description1')
+        cls.dish_1.ingredient.set([cls.ingredient_1, cls.ingredient_2])
+        cls.dish_1.save()
+        user = User.objects.create_user('username1', 'myemail@username1.com', 'myuserpassword')
+        user.save()
+
+
 
     def test_order_add(self):
-        count
-        o = Order.objects.create(
-            dish=self.dish_1, content='content', category=self.category)
-        post_list_url = reverse('posts:post_list')
-        r = self.client.get(post_list_url)
-        print(r.context)
-        self.assertEquals(r.status_code, 200)
-        self.assertEquals(len(r.context['post_list']), 1)
+        count = Order.objects.count()
+        content_data = {'contact':'456468',
+                        'form-TOTAL_FORMS': '3',
+                        'form-INITIAL_FORMS': '2',
+                        'form-MIN_NUM_FORMS': '0',
+                        'form-MAX_NUM_FORMS': '1000',
+                        'form-0-name': self.ingredient_1.name,
+                        'form-0-weight': self.ingredient_1.weight,
+                        'form-0-id': self.ingredient_1.id,
+                        'form-1-name': self.ingredient_2.name,
+                        'form-1-weight': self.ingredient_1.weight,
+                        'form-1-id': self.ingredient_2.id,
+                        }
+        order_list_url = reverse('coocking_book:add_order_list', kwargs={'dish_id':self.dish_1.id})
+        self.client.login(username='username1', password='myuserpassword')
+        self.client.post(order_list_url, data = content_data)
+        self.assertEquals(Order.objects.count(), count + 1)
 
-    def test_post_add(self):
-        post_params = {'title': 'title2',
-                       'content': 'content2', 'category': self.category}
-        count_posts = Post.objects.count()
-        self.client.post('posts:add_post', data=post_params)
-        self.assertEquals(Post.objects.count(), count_posts + 1)
+
+    def test_order_add_fail(self):
+        count = Order.objects.count()
+        content_data = {'contact':'456468',
+                        'form-TOTAL_FORMS': '3',
+                        'form-INITIAL_FORMS': '2',
+                        'form-MIN_NUM_FORMS': '0',
+                        'form-MAX_NUM_FORMS': '1000',
+                        'form-0-name': '',
+                        'form-0-weight': '',
+                        'form-0-id': self.ingredient_1.id,
+                        'form-1-name': '',
+                        'form-1-weight': '',
+                        'form-1-id': self.ingredient_2.id,
+                        }
+        order_list_url = reverse('coocking_book:add_order_list', kwargs={'dish_id':self.dish_1.id})
+        self.client.login(username='username1', password='myuserpassword')
+        self.client.post(order_list_url, data = content_data)
+        self.assertNotEquals(Order.objects.count(), count + 1)
+
+

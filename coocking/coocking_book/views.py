@@ -186,7 +186,6 @@ class AddOrderView(LoginRequiredMixin, View):
                    'form_ingredient': form_ingredient, }
         if form_order.is_valid():
             order = form_order.save(commit=False)
-            order.save()
             order.dish = order_dish
             order.author = request.user
             order.save()
