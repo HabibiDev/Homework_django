@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from notes.models import NotesItem
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -19,6 +20,7 @@ class Ingredient(models.Model):
 class Dish(models.Model):
 
     title = models.CharField(max_length=120, unique=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     ingredient = models.ManyToManyField(Ingredient, related_name='dishes')
     note = GenericRelation(NotesItem)
@@ -43,6 +45,7 @@ class IngredientInOrder(models.Model):
 class Order(models.Model):
     dish = models.ForeignKey(
         Dish, on_delete=models.CASCADE, related_name='order_dish', null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     contact = models.CharField(max_length=120, null=True)
     ingredients = models.ManyToManyField(
         IngredientInOrder, related_name='orders')

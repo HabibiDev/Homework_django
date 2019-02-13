@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
 from django.forms.formsets import formset_factory
 from django.contrib.messages.views import SuccessMessageMixin
@@ -16,8 +18,28 @@ from .forms import (AddDishForm,
 
 # Create your views here.
 
+class RegistrationView(View):
 
-class DishListView(ListView):
+    template_name = 'registration/registration.html'
+
+    def get(self, request, *args, **kwargs):
+        form_user = UserCreationForm()
+        context = {'form_user': form_user}
+        return render(self.request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form_user = UserCreationForm(request.POST)
+        context = {'form_user': form_user}
+        if form_user.is_valid():
+            form_user.save()
+            return redirect('login')
+        return render(self.request, self.template_name, context)
+
+
+        
+
+
+class DishListView(LoginRequiredMixin, ListView):
 
     model = Dish
     template_name = 'index.html'
@@ -28,7 +50,7 @@ class DishListView(ListView):
         return context
 
 
-class DishDetailView(DetailView):
+class DishDetailView(LoginRequiredMixin, DetailView):
 
     model = Dish
     template_name = 'dish_detail.html'
@@ -44,7 +66,7 @@ class DishDetailView(DetailView):
         return context
 
 
-class AddDishView(View):
+class AddDishView(LoginRequiredMixin, View):
     template_name = 'add_dish.html'
 
     def get(self, request, *args, **kwargs):
@@ -60,6 +82,7 @@ class AddDishView(View):
         if form_dish.is_valid():
             dish = form_dish.save(commit=False)
             dish.save()
+            dish.author = request.user
             for form in form_ingredient:
                 if form.is_valid():
                     ingredient = form.save(commit=False)
@@ -72,7 +95,7 @@ class AddDishView(View):
         return render(self.request, self.template_name, context)
 
 
-class UpdateDishView(View):
+class UpdateDishView(LoginRequiredMixin, View):
 
     template_name = 'update_dish.html'
 
@@ -87,27 +110,29 @@ class UpdateDishView(View):
         ingredients = Ingredient.objects.filter(dishes=dish_object.id)
         dish_object.title = request.POST.get('title')
         dish_object.description = request.POST.get('description')
-
-        for ingredient in ingredients:
-            if not request.POST.get('{0}_is_active'.format(ingredient.name)):
-                ingredient.delete()
+        if request.user.username == dish_object.author.username:
+            for ingredient in ingredients:
+                if not request.POST.get('{0}_is_active'.format(ingredient.name)):
+                    ingredient.delete()
+                else:
+                    if request.POST.get(ingredient.name) != ingredient.name:
+                        ingredient.name = request.POST.get(ingredient.name)
+                    if str(request.POST.get('{0}_weight'.format(ingredient.name))) != str(ingredient.weight):
+                        ingredient.weight = float(request.POST.get(
+                            '{0}_weight'.format(ingredient.name))[:-2])
+                ingredient.save()
+            dish_object.save()
+            if 'add_ingredients' in request.POST:
+                return redirect(reverse('coocking_book:add_ingredients', kwargs={'dish_id': dish_object.id}))
+            elif 'add_note' in request.POST:
+                return redirect(reverse('notes:add_notes_to_dish', kwargs={'dish_id': dish_object.id}))
             else:
-                if request.POST.get(ingredient.name) != ingredient.name:
-                    ingredient.name = request.POST.get(ingredient.name)
-                if str(request.POST.get('{0}_weight'.format(ingredient.name))) != str(ingredient.weight):
-                    ingredient.weight = float(request.POST.get(
-                        '{0}_weight'.format(ingredient.name))[:-2])
-            ingredient.save()
-        dish_object.save()
-        if 'add_ingredients' in request.POST:
-            return redirect(reverse('coocking_book:add_ingredients', kwargs={'dish_id': dish_object.id}))
-        elif 'add_note' in request.POST:
-            return redirect(reverse('notes:add_notes_to_dish', kwargs={'dish_id': dish_object.id}))
+                return redirect('coocking_book:dish_list')
         else:
-            return redirect('coocking_book:dish_list')
+            return redirect('/')
 
 
-class AddIngredientView(View):
+class AddIngredientView(LoginRequiredMixin, View):
     template_name = 'add_ingredients.html'
 
     def get(self, request, *args, **kwargs):
@@ -133,13 +158,13 @@ class AddIngredientView(View):
         return render(self.request, self.template_name, context)
 
 
-class DeleteDishView(SuccessMessageMixin, DeleteView):
+class DeleteDishView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Dish
     template_name = 'dish_confirm_delete.html'
     success_url = reverse_lazy('coocking_book:dish_list')
 
 
-class AddOrderView(View):
+class AddOrderView(LoginRequiredMixin, View):
     template_name = 'add_order_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -163,6 +188,7 @@ class AddOrderView(View):
             order = form_order.save(commit=False)
             order.save()
             order.dish = order_dish
+            order.author = request.user
             order.save()
             for form in form_ingredient:
                 if form.is_valid():
@@ -181,7 +207,7 @@ class AddOrderView(View):
         return render(self.request, self.template_name, context)
 
 
-class OrderListView(ListView):
+class OrderListView(LoginRequiredMixin, ListView):
 
     model = Order
     template_name = 'order_list.html'
@@ -192,7 +218,7 @@ class OrderListView(ListView):
         return context
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
 
     model = Order
     template_name = 'order_detail.html'

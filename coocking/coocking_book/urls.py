@@ -8,7 +8,8 @@ from .views import (SearchView,
                     OrderDetailView,
                     DeleteDishView,
                     UpdateDishView,
-                    AddIngredientView,)
+                    AddIngredientView,
+                    RegistrationView,)
 
 app_name = 'coocking_book'
 
@@ -27,4 +28,6 @@ urlpatterns = [
     path('orders/<int:pk>', OrderDetailView.as_view(), name='order_detail'),
     path('dish_<int:dish_id>/add_ingredients',
          AddIngredientView.as_view(), name='add_ingredients'),
+    path('accounts/registration/', RegistrationView.as_view(), name='registration'),
+
 ]
