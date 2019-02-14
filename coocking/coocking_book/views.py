@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
 from django.forms.formsets import formset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
+from django.core.exceptions import PermissionDenied
 from .models import Dish, Ingredient, IngredientInOrder, Order
 from notes.models import Note
 from django.views.generic import ListView, DetailView, DeleteView
@@ -17,6 +18,7 @@ from .forms import (AddDishForm,
                     OrderForm)
 
 # Create your views here.
+
 
 class RegistrationView(View):
 
@@ -34,9 +36,6 @@ class RegistrationView(View):
             form_user.save()
             return redirect('login')
         return render(self.request, self.template_name, context)
-
-
-        
 
 
 class DishListView(LoginRequiredMixin, ListView):
@@ -66,7 +65,10 @@ class DishDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class AddDishView(LoginRequiredMixin, View):
+class AddDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = "coocking_book.add_dish"
+    raise_exception = True
+
     template_name = 'add_dish.html'
 
     def get(self, request, *args, **kwargs):
@@ -95,12 +97,14 @@ class AddDishView(LoginRequiredMixin, View):
         return render(self.request, self.template_name, context)
 
 
-class UpdateDishView(LoginRequiredMixin, View):
-
+class UpdateDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = "coocking_book.change_dish"
     template_name = 'update_dish.html'
 
     def get(self, request, *args, **kwargs):
         dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
+        if not request.user.username == dish_object.author.username:
+            raise PermissionDenied()
         ingredients = Ingredient.objects.filter(dishes=dish_object.id)
         context = {'form_dish': dish_object, 'ingredients': ingredients}
         return render(self.request, self.template_name, context)
@@ -132,7 +136,8 @@ class UpdateDishView(LoginRequiredMixin, View):
             return redirect('/')
 
 
-class AddIngredientView(LoginRequiredMixin, View):
+class AddIngredientView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = "coocking_book.add_ingredient"
     template_name = 'add_ingredients.html'
 
     def get(self, request, *args, **kwargs):
@@ -158,14 +163,16 @@ class AddIngredientView(LoginRequiredMixin, View):
         return render(self.request, self.template_name, context)
 
 
-class DeleteDishView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class DeleteDishView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Dish
     template_name = 'dish_confirm_delete.html'
     success_url = reverse_lazy('coocking_book:dish_list')
+    permission_required = "coocking_book.delete_dish"
 
 
-class AddOrderView(LoginRequiredMixin, View):
+class AddOrderView(LoginRequiredMixin, PermissionRequiredMixin, View):
     template_name = 'add_order_list.html'
+    permission_required = "coocking_book.add_order"
 
     def get(self, request, *args, **kwargs):
         order_dish = Dish.objects.get(id=self.kwargs['dish_id'])
@@ -206,14 +213,17 @@ class AddOrderView(LoginRequiredMixin, View):
         return render(self.request, self.template_name, context)
 
 
-class OrderListView(LoginRequiredMixin, ListView):
+class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = "coocking_book.view_order"
 
     model = Order
     template_name = 'order_list.html'
 
     def get_context_data(self, **kwargs):
+        if self.request.user.is_authenticated:
+            user_id = self.request.user.id
         context = super().get_context_data(**kwargs)
-        context['orders'] = Order.objects.all()
+        context['orders'] = Order.objects.filter(author__id = user_id)
         return context
 
 
@@ -223,6 +233,8 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'order_detail.html'
 
     def get_context_data(self, **kwargs):
+        if not  self.request.user == self.get_object().author:
+            raise PermissionDenied()
         context = super(OrderDetailView, self).get_context_data(**kwargs)
         content_type = ContentType.objects.get_for_model(Order)
         context['notes'] = Note.objects.filter(

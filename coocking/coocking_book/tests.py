@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate
 # Create your tests here.
 from django.urls import reverse
@@ -22,6 +22,9 @@ class CoockingBookTestCase(TestCase):
         cls.dish_1.save()
         user = User.objects.create_user(
             'username1', 'myemail@username1.com', 'myuserpassword')
+        permissions = Permission.objects.all()
+        for p in permissions:
+            user.user_permissions.add(p)
         user.save()
 
     def test_order_add(self):
