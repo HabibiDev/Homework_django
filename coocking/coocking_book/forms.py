@@ -16,7 +16,7 @@ AddIngredientFormFormSet = formset_factory(
     AddIngredientForm, extra=10)
 
 AddIngredientToOrderFormSet = modelformset_factory(
-    Ingredient, form=AddIngredientForm, fields=('name', 'weight',), form_)
+    Ingredient, form=AddIngredientForm, fields=('name', 'weight',))
 
 
 class AddDishForm(forms.ModelForm):
