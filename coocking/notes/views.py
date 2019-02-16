@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from django.shortcuts import render
-
-# Create your views here.
-=======
 from .models import Note
 from .models import NotesItem
 from coocking_book.models import Dish
@@ -74,4 +70,4 @@ class NoteListView(ListView):
             note_item__content_type=content_type)
         context['model'] = self.kwargs['model'].upper()
         return context
->>>>>>> 9095da5e5be95d1ef370d086c06c6d83d0fd6fa2
+

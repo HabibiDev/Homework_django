@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate
-# Create your tests here.
 from django.urls import reverse
 from .models import *
 # Create your tests here.

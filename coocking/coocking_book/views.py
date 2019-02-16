@@ -205,10 +205,10 @@ class AddOrderView(LoginRequiredMixin, PermissionRequiredMixin, View):
                         order_ingredient.save()
                         order.ingredients.add(order_ingredient)
                         order.save()
-                if order.ingredients.all().count() == 0:
-                    order.delete()
-                    context['error'] = 'Для оформления заказа нужно указать хотя бы один ингредиент и его количество'
-                    return render(self.request, self.template_name, context)
+            if order.ingredients.all().count() == 0:
+                order.delete()
+                context['error'] = 'Для оформления заказа нужно указать хотя бы один ингредиент и его количество'
+                return render(self.request, self.template_name, context)
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)
 
@@ -223,8 +223,21 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         if self.request.user.is_authenticated:
             user_id = self.request.user.id
         context = super().get_context_data(**kwargs)
-        context['orders'] = Order.objects.filter(author__id = user_id)
+        context['orders'] = Order.objects.filter(author__id = user_id, is_active=True)
         return context
+
+    def post(self, request, *args, **kwargs):
+        success_message = None
+        orders = Order.objects.filter(author__id = self.request.user.id, is_active=True)
+        if 'close_order' in request.POST and len(orders) > 0:
+            for order in orders:
+                order.is_active = False
+                order.save()
+            success_message = 'Ваш заказ принят'
+        return redirect('coocking_book:order_list')
+
+
+
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):

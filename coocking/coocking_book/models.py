@@ -50,6 +50,7 @@ class Order(models.Model):
     ingredients = models.ManyToManyField(
         IngredientInOrder, related_name='orders')
     order_date = models.DateField(auto_now_add=True, null=True)
+    is_active = models.BooleanField(default=True)
     note = GenericRelation(NotesItem)
 
     def get_absolute_url(self):
