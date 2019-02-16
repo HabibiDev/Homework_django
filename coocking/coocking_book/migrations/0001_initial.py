@@ -26,7 +26,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120, verbose_name='Название')),
+                ('name', models.CharField(max_length=120,
+                                          verbose_name='Название')),
                 ('weight', models.FloatField(blank=True,
                                              null=True, verbose_name='Количество в граммах')),
             ],
@@ -36,7 +37,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120, verbose_name='Название')),
+                ('name', models.CharField(max_length=120,
+                                          verbose_name='Название')),
                 ('weight', models.FloatField(blank=True,
                                              null=True, verbose_name='Количество в граммах')),
             ],
