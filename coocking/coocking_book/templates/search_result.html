@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load i18n %}
 {%block content%}
 <form action="{% url "dish_search" %}" method="GET">
     <input type="text" name="q" />
-    <button type="submit">Поиск</button>
+    <button type="submit">{% trans 'Поиск'%}</button>
 </form>
 	{%for dish  in object_list%}
 		<h2><a href="{% url 'dish_detail' dish.id %}">{{dish.title}}</a></h2>
-		<h3>Описание:</h3>
+		<h3>{% trans 'Описание:'%}</h3>
 		<p>{{dish.description}}</p>
-		<p><a href="">Оформить заказ</a></p>
+		<p><a href="{% url 'coocking_book:add_order_list' dish.id %}">{% trans 'Оформить заказ'%}</a></p>
 	{%endfor%}
 {%endblock%}

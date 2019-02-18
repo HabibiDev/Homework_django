@@ -30,4 +30,5 @@ urlpatterns = [
          AddIngredientView.as_view(), name='add_ingredients'),
     path('accounts/registration/', RegistrationView.as_view(), name='registration'),
 
+
 ]

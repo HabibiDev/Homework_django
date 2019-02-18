@@ -1,6 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{%block content%}
 <form method="post">
 	{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-    <a href="{% url 'coocking_book:dish_list' %}">Back</a>
+    <p>{% trans 'Вы уверены что хотите удалить это блюдо'%} "{{ object }}"?</p>
+    <input type="submit" value="{% trans 'Confirm'%}">
+    <a href="{% url 'coocking_book:dish_list' %}">{% trans 'Back'%}</a>
 </form>
+{%endblock%}

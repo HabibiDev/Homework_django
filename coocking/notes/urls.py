@@ -9,5 +9,4 @@ urlpatterns = [
          AddNoteToDishView.as_view(), name='add_notes_to_dish'),
     path('order<int:order_id>/add_note',
          AddNoteToOrderView.as_view(), name='add_notes_to_order'),
-
 ]

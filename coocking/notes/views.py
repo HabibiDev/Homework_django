@@ -68,6 +68,5 @@ class NoteListView(ListView):
             app_label='coocking_book', model=self.kwargs['model'])
         context['notes'] = Note.objects.filter(
             note_item__content_type=content_type)
-        context['model'] = self.kwargs['model'].upper()
         return context
 

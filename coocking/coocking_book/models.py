@@ -4,7 +4,7 @@ from notes.models import NotesItem
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-
+from django.utils.text import format_lazy
 # Create your models here.
 
 
@@ -60,4 +60,7 @@ class Order(models.Model):
         return reverse('coocking_book:order_detail', kwargs={'pk': self.pk})
 
     def __str__(self):
-        return _('Тел.заказчика:{0} дата заказа:{1} блюдо:{2}'.format(self.contact, self.order_date, self.dish))
+        contact = self.contact
+        order_date = self.order_date
+        dish = self.dish
+        return _('Тел.заказчика:{contact} дата заказа:{order_date} блюдо:{dish}').format(contact=self.contact, order_date=self.order_date, dish=self.dish)
