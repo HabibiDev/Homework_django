@@ -14,9 +14,10 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'weight',)
     list_filter = ('name',)
 
+
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('contact', 'dish', 'author', 'is_active')
-    
+    list_display = ('contact', 'dish', 'author', 'is_active', 'order_date')
+
 
 admin.site.register(Dish, DishAdmin)
 admin.site.register(Ingredient, IngredientAdmin)

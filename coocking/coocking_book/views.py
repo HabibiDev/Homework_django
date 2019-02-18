@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
@@ -103,7 +104,7 @@ class UpdateDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         dish_object = get_object_or_404(Dish, pk=self.kwargs['dish_id'])
-        if not request.user.username == dish_object.author.username:
+        if request.user != dish_object.author:
             raise PermissionDenied()
         ingredients = Ingredient.objects.filter(dishes=dish_object.id)
         context = {'form_dish': dish_object, 'ingredients': ingredients}
@@ -114,7 +115,7 @@ class UpdateDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
         ingredients = Ingredient.objects.filter(dishes=dish_object.id)
         dish_object.title = request.POST.get('title')
         dish_object.description = request.POST.get('description')
-        if request.user.username == dish_object.author.username:
+        if request.user == dish_object.author:
             for ingredient in ingredients:
                 if not request.POST.get('{0}_is_active'.format(ingredient.name)):
                     ingredient.delete()
@@ -221,23 +222,19 @@ class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         if self.request.user.is_authenticated:
-            user_id = self.request.user.id
+            user = self.request.user
         context = super().get_context_data(**kwargs)
-        context['orders'] = Order.objects.filter(author__id = user_id, is_active=True)
+        context['orders'] = Order.objects.filter(author=user, is_active=True)
         return context
 
     def post(self, request, *args, **kwargs):
-        success_message = None
-        orders = Order.objects.filter(author__id = self.request.user.id, is_active=True)
+        orders = Order.objects.filter(
+            author__id=self.request.user.id, is_active=True)
         if 'close_order' in request.POST and len(orders) > 0:
             for order in orders:
                 order.is_active = False
                 order.save()
-            success_message = 'Ваш заказ принят'
         return redirect('coocking_book:order_list')
-
-
-
 
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -246,7 +243,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     template_name = 'order_detail.html'
 
     def get_context_data(self, **kwargs):
-        if not  self.request.user == self.get_object().author:
+        if self.request.user != self.get_object().author:
             raise PermissionDenied()
         context = super(OrderDetailView, self).get_context_data(**kwargs)
         content_type = ContentType.objects.get_for_model(Order)

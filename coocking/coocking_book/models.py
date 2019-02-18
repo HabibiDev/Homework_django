@@ -20,7 +20,8 @@ class Ingredient(models.Model):
 class Dish(models.Model):
 
     title = models.CharField(max_length=120, unique=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='dish_author')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True, related_name='dish_author')
     description = models.TextField(blank=True, null=True)
     ingredient = models.ManyToManyField(Ingredient, related_name='dishes')
     note = GenericRelation(NotesItem)
@@ -45,11 +46,12 @@ class IngredientInOrder(models.Model):
 class Order(models.Model):
     dish = models.ForeignKey(
         Dish, on_delete=models.CASCADE, related_name='order_dish', null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='order_author')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True, related_name='order_author')
     contact = models.CharField(max_length=120, null=True)
     ingredients = models.ManyToManyField(
         IngredientInOrder, related_name='orders')
-    order_date = models.DateField(auto_now_add=True, null=True)
+    order_date = models.DateTimeField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True)
     note = GenericRelation(NotesItem)
 
