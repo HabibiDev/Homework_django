@@ -3,15 +3,16 @@ from django.contrib.contenttypes.fields import GenericRelation
 from notes.models import NotesItem
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=120, unique=False,
-                            verbose_name='Название')
+                            verbose_name=_('Название'))
     weight = models.FloatField(
-        verbose_name='Количество в граммах', blank=True, null=True)
+        verbose_name=_('Количество в граммах'), blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -35,9 +36,9 @@ class Dish(models.Model):
 
 class IngredientInOrder(models.Model):
     name = models.CharField(max_length=120, unique=False,
-                            verbose_name='Название')
+                            verbose_name=_('Название'))
     weight = models.FloatField(
-        verbose_name='Количество в граммах', blank=True, null=True)
+        verbose_name=_('Количество в граммах'), blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -59,4 +60,4 @@ class Order(models.Model):
         return reverse('coocking_book:order_detail', kwargs={'pk': self.pk})
 
     def __str__(self):
-        return 'Тел.заказчика:{0} дата заказа:{1} блюдо:{2}'.format(self.contact, self.order_date, self.dish)
+        return _('Тел.заказчика:{0} дата заказа:{1} блюдо:{2}'.format(self.contact, self.order_date, self.dish))

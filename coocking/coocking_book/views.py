@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
@@ -34,7 +35,11 @@ class RegistrationView(View):
         form_user = UserCreationForm(request.POST)
         context = {'form_user': form_user}
         if form_user.is_valid():
-            form_user.save()
+            u = form_user.save()
+            user = User.objects.get(id=u.id)
+            group = Group.objects.get(name='simple_user_group')
+            user.groups.add(group)
+            user.save()
             return redirect('login')
         return render(self.request, self.template_name, context)
 
@@ -208,7 +213,7 @@ class AddOrderView(LoginRequiredMixin, PermissionRequiredMixin, View):
                         order.save()
             if order.ingredients.all().count() == 0:
                 order.delete()
-                context['error'] = 'Для оформления заказа нужно указать хотя бы один ингредиент и его количество'
+                context['error'] = _('Для оформления заказа нужно указать хотя бы один ингредиент и его количество')
                 return render(self.request, self.template_name, context)
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)

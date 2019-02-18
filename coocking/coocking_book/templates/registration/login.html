@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 
 {%block content%}
 
-<h2>Вход</h2>
+<h2>{% trans 'Вход'%}</h2>
 <form method='POST'>
 	{%csrf_token%}
 	{{form.as_p}}
-	<button type='submit'>Войти</button>
+	<button type='submit'>{% trans 'Войти'%}</button>
 </form>
-<p><a href="{% url 'coocking_book:registration' %}">Зарегистрироваться</a>
+<p><a href="{% url 'coocking_book:registration' %}">{% trans 'Зарегистрироваться' %}</a>
 {%endblock%}

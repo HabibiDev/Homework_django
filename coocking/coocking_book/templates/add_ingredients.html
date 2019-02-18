@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load i18n %}
 {%block content%}
 <h1>{{dish_object.title}}</h1>
 <form action="{{add_ingredients}}" method='POST'>
 	{%csrf_token%}	
-	<p>Ингредиенты:</p>
+	<p>{% trans 'Ингредиенты:'%}</p>
 	{{form_ingredient.as_p}}
-	<button type='submit'>Добавить ингредиенты</button>
+	<button type='submit'>{% trans 'Добавить ингредиенты'%}</button>
 </form>
 {%endblock%}

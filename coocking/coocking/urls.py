@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('coocking_book.urls')),
     path('notes/', include('notes.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
