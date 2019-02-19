@@ -31,7 +31,7 @@
            <a href="{% url 'coocking_book:add_dish' %}">{% trans 'Добавить блюдо'%}</a>
            <a href="{% url 'coocking_book:order_list' %}">{% trans 'Заказы'%}</a>
         </p>
-        <p>{% trans 'Заметки:'%}
+        <p>{% trans 'Заметки:'%} 
           <a href="{% url 'notes:note_list' 'dish' %}">{% trans 'Блюда'%}</a>
           <a href="{% url 'notes:note_list' 'order' %}">{% trans 'Заказы'%}</a>
         </p>

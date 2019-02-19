@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load i18n %}
 {%block content%}
 <h1>{{model}}</h1>
-<p>Заметки:</p>
+<p>{% trans 'Заметки:'%}</p>
 {%for note in notes%}
 <p>{{note.content}}</p>
 {%endfor%}
 <form action="" method='POST'>
 	{%csrf_token%}	
-	<p>Новая заметка:</p>
+	<p>{% trans 'Новая заметка:'%}</p>
 	<input type="text" name="add_note">
-	<button type='submit'>Добавить заметку</button>
+	<button type='submit'>{% trans 'Добавить заметку'%}</button>
 </form>
 {%endblock%}

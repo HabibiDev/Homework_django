@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 {%block content%}
-<p>Заметки:</p>
+<p>{% trans 'Заметки:'%}</p>
 {%for note in notes%}
 <p>{{note.content}}</p>
 {%endfor%}
