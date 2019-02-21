@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'coocking_book',
     'notes',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

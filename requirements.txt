@@ -1,9 +1,9 @@
 amqp==2.4.1
 billiard==3.5.0.5
 celery==4.2.1
-Django==2.1.5
+Django==2.1.7
+djangorestframework==3.9.1
 kombu==4.3.0
-pkg-resources==0.0.0
 pytz==2018.9
-redis==3.1.0
+redis==3.2.0
 vine==1.2.0

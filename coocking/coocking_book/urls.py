@@ -10,6 +10,7 @@ from .views import (SearchView,
                     UpdateDishView,
                     AddIngredientView,
                     RegistrationView,)
+from .api_views import DishList, DishDetail, OrderList, OrderDetail
 
 app_name = 'coocking_book'
 
@@ -29,6 +30,10 @@ urlpatterns = [
     path('dish_<int:dish_id>/add_ingredients',
          AddIngredientView.as_view(), name='add_ingredients'),
     path('accounts/registration/', RegistrationView.as_view(), name='registration'),
+    path('api_dish_list/', DishList.as_view(), name='api_dish_list'),
+    path('api_dish_list/<int:pk>', DishDetail.as_view(), name='api_dish_detail'),
+    path('api_order_list/', OrderList.as_view(), name='api_order_list'),
+    path('api_order_list/<int:pk>', OrderDetail.as_view(), name='api_order_detail'),
 
 
 ]
