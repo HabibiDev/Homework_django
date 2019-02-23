@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_swagger.views import get_swagger_view
+
+docks_view = get_swagger_view(title='Docks API')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +27,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
+    path('swag', docks_view),
 ]

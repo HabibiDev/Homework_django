@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'coocking_book',
     'notes',
     'rest_framework',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
