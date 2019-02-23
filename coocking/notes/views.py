@@ -69,4 +69,3 @@ class NoteListView(ListView):
         context['notes'] = Note.objects.filter(
             note_item__content_type=content_type)
         return context
-

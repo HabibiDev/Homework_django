@@ -213,7 +213,8 @@ class AddOrderView(LoginRequiredMixin, PermissionRequiredMixin, View):
                         order.save()
             if order.ingredients.all().count() == 0:
                 order.delete()
-                context['error'] = _('Для оформления заказа нужно указать хотя бы один ингредиент и его количество')
+                context['error'] = _(
+                    'Для оформления заказа нужно указать хотя бы один ингредиент и его количество')
                 return render(self.request, self.template_name, context)
             return redirect('coocking_book:dish_list')
         return render(self.request, self.template_name, context)

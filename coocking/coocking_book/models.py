@@ -22,9 +22,10 @@ class Dish(models.Model):
 
     title = models.CharField(max_length=120, unique=True)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, blank=True, related_name='dish_author', default='John Doe')
+        User, on_delete=models.CASCADE, null=True, blank=True, related_name='dish_author')
     description = models.TextField(blank=True, null=True)
-    ingredient = models.ManyToManyField(Ingredient, related_name='dishes', default='None')
+    ingredient = models.ManyToManyField(
+        Ingredient, related_name='dishes', default='None')
     note = GenericRelation(NotesItem)
 
     def __str__(self):
@@ -46,9 +47,9 @@ class IngredientInOrder(models.Model):
 
 class Order(models.Model):
     dish = models.ForeignKey(
-        Dish, on_delete=models.CASCADE, related_name='order_dish', null=True, default='None')
+        Dish, on_delete=models.CASCADE, related_name='order_dish', null=True)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, blank=True, related_name='order_author', default='John Doe')
+        User, on_delete=models.CASCADE, null=True, blank=True, related_name='order_author')
     contact = models.CharField(max_length=120, null=True)
     ingredients = models.ManyToManyField(
         IngredientInOrder, related_name='orders', default='None')
