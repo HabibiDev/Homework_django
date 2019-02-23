@@ -139,3 +139,8 @@ CELERY_TIMEZONE = TIME_ZONE
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__name__))
 LOCALE_PATHS = (os.path.join(SITE_ROOT, 'locale'), )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 2,
+}

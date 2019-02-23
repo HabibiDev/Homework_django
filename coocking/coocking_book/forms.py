@@ -24,11 +24,11 @@ class AddDishForm(forms.ModelForm):
     class Meta:
         model = Dish
         fields = ('title', 'description')
-        exclude = ('ingredient', 'author')
+        exclude = ('ingredient', 'author', 'slug')
 
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('contact',)
-        exclude = ('dish', 'author')
+        exclude = ('dish', 'author', 'slug')

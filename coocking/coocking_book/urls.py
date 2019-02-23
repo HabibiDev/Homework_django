@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (SearchView,
                     DishDetailView,
                     DishListView,
@@ -10,9 +11,12 @@ from .views import (SearchView,
                     UpdateDishView,
                     AddIngredientView,
                     RegistrationView,)
-from .api_views import DishList, DishDetail, OrderList, OrderDetail
+from .api_views import DishList, DishDetail, OrderList, OrderDetail, DishViewSet, OrderViewSet
 
 app_name = 'coocking_book'
+router = DefaultRouter()
+router.register('dishes', DishViewSet)
+router.register('orders_api', OrderViewSet)
 
 urlpatterns = [
     path('', DishListView.as_view(), name='dish_list'),
@@ -35,5 +39,6 @@ urlpatterns = [
     path('api_order_list/', OrderList.as_view(), name='api_order_list'),
     path('api_order_list/<int:pk>', OrderDetail.as_view(), name='api_order_detail'),
 
-
 ]
+
+urlpatterns+=router.urls
