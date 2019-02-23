@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-from notes.models import NotesItem
+from django.contrib.contenttypes.models import ContentType
+from notes.models import NotesItem, Note
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -29,6 +30,10 @@ class Dish(models.Model):
         Ingredient, related_name='dishes')
     note = GenericRelation(NotesItem)
     slug = models.SlugField(max_length=255, blank=True, null=True)
+
+    def notes(self):
+        return Note.objects.filter(note_item__object_id=self.id,
+                                   note_item__content_type=ContentType.objects.get_for_model(self.__class__))
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
