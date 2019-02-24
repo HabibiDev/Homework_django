@@ -1,12 +1,17 @@
-from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from notes.models import NotesItem, Note
-from django.urls import reverse
-from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
-from django.utils.text import format_lazy
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.template.defaultfilters import slugify
+from django.urls import reverse
+from django.utils.text import format_lazy
+from django.utils.translation import gettext_lazy as _
+from notes.models import Note
+from notes.models import NotesItem
+from rest_framework.authtoken.models import Token
 # Create your models here.
 
 
@@ -69,6 +74,10 @@ class Order(models.Model):
     note = GenericRelation(NotesItem)
     slug = models.SlugField(max_length=255, blank=True, null=True)
 
+    def notes(self):
+        return Note.objects.filter(note_item__object_id=self.id,
+                                   note_item__content_type=ContentType.objects.get_for_model(self.__class__))
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.dish)
         super(Order, self).save(*args, **kwargs)
@@ -81,3 +90,9 @@ class Order(models.Model):
         order_date = self.order_date
         dish = self.dish
         return _('Тел.заказчика:{contact} дата заказа:{order_date} блюдо:{dish}').format(contact=self.contact, order_date=self.order_date, dish=self.dish)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)

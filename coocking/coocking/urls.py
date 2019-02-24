@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_swagger.views import get_swagger_view
+from rest_framework.authtoken import views
 
 docks_view = get_swagger_view(title='Docks API')
 
@@ -28,4 +29,6 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('api-auth/', include('rest_framework.urls')),
     path('swag', docks_view),
+    path('api-token-auth/', views.obtain_auth_token),
+
 ]
