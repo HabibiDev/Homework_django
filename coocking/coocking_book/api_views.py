@@ -12,22 +12,30 @@ class DishList(generics.ListCreateAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     paginathion_class = LimitOffsetPagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly,)
 
 
 class DishDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly,)
 
 
 class OrderList(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     paginathion_class = LimitOffsetPagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly,)
 
 
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly,)
 
 
 class DishViewSet(viewsets.ModelViewSet):
@@ -35,7 +43,7 @@ class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     paginathion_class = LimitOffsetPagination
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly(),
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly,)
 
     @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
