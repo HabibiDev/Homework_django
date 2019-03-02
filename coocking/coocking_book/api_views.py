@@ -11,7 +11,7 @@ from .permissions import IsAuthorOrReadOnly
 class DishList(generics.ListCreateAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    paginathion_class = LimitOffsetPagination
+    pagination_class = LimitOffsetPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly,)
 
@@ -26,7 +26,7 @@ class DishDetail(generics.RetrieveUpdateDestroyAPIView):
 class OrderList(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    paginathion_class = LimitOffsetPagination
+    pagination_class = LimitOffsetPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly,)
 
@@ -42,14 +42,9 @@ class DishViewSet(viewsets.ModelViewSet):
 
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
-    paginathion_class = LimitOffsetPagination
+    pagination_class = LimitOffsetPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly,)
-
-    @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
-    def highlight(self, request, *args, **kwargs):
-        dish = self.get_object()
-        return Response(dish.highlighted)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -59,14 +54,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    paginathion_class = LimitOffsetPagination
+    pagination_class = LimitOffsetPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsAuthorOrReadOnly,)
-
-    @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
-    def highlight(self, request, *args, **kwargs):
-        order = self.get_object()
-        return Response(order.highlighted)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
