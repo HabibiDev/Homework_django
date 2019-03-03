@@ -126,11 +126,12 @@ class UpdateDishView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 if not request.POST.get('{0}_is_active'.format(ingredient.name)):
                     ingredient.delete()
                 else:
+                    if str(request.POST.get('{0}_weight'.format(ingredient.name))) != str(ingredient.weight):
+                        ingredient.weight = float(str(request.POST.get(
+                            '{0}_weight'.format(ingredient.name)))[:-2])
                     if request.POST.get(ingredient.name) != ingredient.name:
                         ingredient.name = request.POST.get(ingredient.name)
-                    if str(request.POST.get('{0}_weight'.format(ingredient.name))) != str(ingredient.weight):
-                        ingredient.weight = float(request.POST.get(
-                            '{0}_weight'.format(ingredient.name))[:-2])
+
                 ingredient.save()
             dish_object.save()
             if 'add_ingredients' in request.POST:

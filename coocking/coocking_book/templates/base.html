@@ -53,9 +53,10 @@
         console.log('WebSockets connection created.');
       };
      socket.onmessage = function(event) {
-        var data = JSON.parse(event.data)
-        if (data['text_data'] == "Reload"){
-          window.location.reload();
+        var data = event.data
+        if (data === "Reload"){
+          location.reload();
+          console.log('Dish list update');
           }
        };
      });
