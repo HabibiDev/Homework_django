@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
+from rest_framework.authtoken.models import Token
 from django.forms.formsets import formset_factory
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
@@ -52,6 +53,7 @@ class DishListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['dish_list'] = Dish.objects.all()
+        context['token'] = Token.objects.get(user=self.request.user)
         return context
 
 

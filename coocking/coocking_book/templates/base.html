@@ -42,19 +42,23 @@
         {%endblock%}
     </div>
   </div>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   {%block script%}
     <script type="text/javascript">
-   var socket = new WebSocket(
-        'ws://' + window.location.host);
-   socket.onopen = function open() {
-      console.log('WebSockets connection created.');
-    };
-   socket.onmessage = function(event) {
-      var data = JSON.parse(event.data)
-      if (data.message=='Reload'){
-         location.reload();
+    $(function() {
+        var token = '{{ token }}';
+        var url = "ws://" + document.location.host + "/ws/dishes/" + '?token=' + token;
+        var socket = new WebSocket(url);
+     socket.onopen = function open() {
+        console.log('WebSockets connection created.');
       };
-     };
+     socket.onmessage = function(event) {
+        var data = JSON.parse(event.data)
+        if (data['text_data'] == "Reload"){
+          window.location.reload();
+          }
+       };
+     });
   </script>
   {%endblock%}
 </body>

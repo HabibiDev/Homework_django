@@ -17,7 +17,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 @receiver(post_save, sender=Dish)
 def update_dish_message(sender, instance=None, created=False, **kwargs):
-    print('update')
     async_to_sync(channel_layer.group_send)("coocking_book_clients", {
         "type": "update.message",
         "text_data": 'Reload'})
+    print('update_dish_list')
