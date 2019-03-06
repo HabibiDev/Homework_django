@@ -169,3 +169,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+try:
+    from .settings_local import *
+except Exception:
+    print("Settings deploy")
