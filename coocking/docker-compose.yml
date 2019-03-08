@@ -1,0 +1,38 @@
+version: '3'
+
+services:  
+  # PostgreSQL database
+  postgres:
+    image: postgres
+    hostname: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis
+    hostname: redis
+  web:
+    build: .
+    command: ./run_web.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+  worker:
+    build: .
+    command: ./run_celery.sh
+    volumes:
+      - .:/app
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - redis
