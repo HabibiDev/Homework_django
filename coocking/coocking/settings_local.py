@@ -9,9 +9,9 @@ DATABASES = {
        'NAME': 'postgres',
        'USER': 'postgres',
        'PASSWORD': '123',
-       'HOST': '172.17.0.2',
+       'HOST': '172.17.0.4',
        'PORT': '5432'
    }
 }
 
-INTERNAL_IPS = '172.17.0.2'
+INTERNAL_IPS = '172.17.0.4'
