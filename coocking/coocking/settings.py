@@ -88,6 +88,10 @@ DATABASES = {
     }
 }
 
+try:
+    from .settings_local import *
+except Exception:
+    print("Settings deploy")
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -134,8 +138,8 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-BROKER_URL = ('redis':6379)
-CELERY_RESULT_BACKEND = ('redis':6379)
+BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://redis:6379')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BACKEND', 'redis://redis:6379')
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -165,12 +169,10 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [('redis':6379)],
+            "hosts": [(os.getenv('REDIS_HOST', 'redis'),
+                       os.getenv('REDIS_PORT', 6379)
+                       )],
         },
     },
 }
 
-try:
-    from .settings_local import *
-except Exception:
-    print("Settings deploy")

@@ -1,24 +1,19 @@
 version: '3'
 
 services:  
-  # PostgreSQL database
-  postgres:
-    image: postgres
-    hostname: db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - "5432:5432"
-  redis:
-    image: redis
-    hostname: redis
+
   web:
     build: .
     command: ./run_web.sh
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - CELERY_BACKEND=redis://redis:6379
+      - CELERY_BROKER=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
     links:
@@ -26,9 +21,10 @@ services:
       - redis
     depends_on:
       - postgres
-  worker:
+
+  celery_worker:
     build: .
-    command: ./run_celery.sh
+    command: ./run_celery_worker.sh
     volumes:
       - .:/app
     links:
@@ -36,3 +32,15 @@ services:
       - redis
     depends_on:
       - redis
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=postgres03
+      - POSTGRES_USER=dishes_admin
+      - POSTGRES_PASSWORD=123456
+  redis:
+    image: redis
+volumes:
+    postgres_data:
