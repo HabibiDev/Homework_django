@@ -14,5 +14,8 @@ COPY . /app
 EXPOSE 8000
 RUN pip install -U pip wheel
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install gunicorn
+RUN pip install uwsgi
 USER python
+CMD uwsgi wsgi.ini
 ENV PYTHONUNBUFFERED 1
